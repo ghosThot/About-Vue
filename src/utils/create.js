@@ -1,22 +1,23 @@
-import Vue from 'vue'
+import Notice from '@/components/Notice.vue';
+
 /**
  * 实现一个create方法，能够创建指定组件的实例
  * 并将其挂载在body上
  */
-export default function create(Component, props) {
+// export default function create(Component, props) {
 
-  // 方案一
-  const Ctor = Vue.extend(Component);
+//   // 方案一
+//   const Ctor = Vue.extend(Component);
   
-  const comp = new Ctor({propsData:props});
+//   const comp = new Ctor({propsData:props});
 
-  comp.$mount()
+//   comp.$mount()
 
-  document.body.appendChild(comp.$el)
+//   document.body.appendChild(comp.$el)
   
-  comp.remove = () => {
-    document.body.removeChild(comp.$el)
-  }
+//   comp.remove = () => {
+//     document.body.removeChild(comp.$el)
+//   }
 
   // 方案二
   // const vm = new Vue({
@@ -33,5 +34,30 @@ export default function create(Component, props) {
   //   comp.$destroy()
   // }
 
-  return comp
+  // return comp
+// }
+
+
+//插件形式
+export default {
+  install(Vue) {
+    Vue.prototype.$notice = function (props) {
+      // return create(Notice, options)
+      const Ctor = Vue.extend(Notice);
+
+      const comp = new Ctor({
+        propsData: props
+      });
+
+      comp.$mount()
+
+      document.body.appendChild(comp.$el)
+
+      comp.remove = () => {
+        document.body.removeChild(comp.$el)
+      }
+      return comp
+    }
+  }
+
 }
