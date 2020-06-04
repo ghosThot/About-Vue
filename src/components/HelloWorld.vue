@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
+    <p @click="$store.commit('add')">sync {{$store.state.counter}}</p>
+    <p @click="$store.dispatch('add')">async {{$store.state.counter}}</p>
+    <p @click="$store.commit('add')">Gettters：{{$store.getters.doubleCounter}}</p>
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
       check out the
