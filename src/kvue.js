@@ -13,7 +13,7 @@ function defineReactive(obj, key, val) {
   Object.defineProperty(obj, key, {
     //get set 没办法拦截到新进来的属性
     get() {
-      console.log('get', key);
+      console.log('get', key);  
 
       // 依赖收集，把watch和dep关联
       // 希望Watcher实例化时，访问以下对应key，同时把这个实例设置到Dep.target上面
