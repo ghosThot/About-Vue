@@ -48,9 +48,9 @@ class VueRouter {
         return
       }
 
-      // /about/info
+      // 嵌套路由 /about/info
       if (route.path !== '/' && this.current.indexOf(route.path) !== -1) {
-        this.matched.push(route.path)
+        this.matched.push(route)
         if (route.children) {
           this.match(route.children)
         }
@@ -98,9 +98,10 @@ VueRouter.install = function (_Vue) {
             depth++
           }
         }
+        
+        parent = parent.$parent
       }
 
-      parent = parent.$parent
 
 
       // 获取path对应的component
@@ -116,6 +117,8 @@ VueRouter.install = function (_Vue) {
       
       let component = null
       const route = this.$router.matched[depth]
+      console.log(route);
+      
       if (route) {
         component = route.component
       }
