@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>初始化</h2>
+    <p>{{bar}}</p>
+  </div>
+  <script>
+    // 有几个Observer？Dep？Watcher
+    // data中有多少个对象就有多少个Observer：obj,foo 2个
+    // 有多少个key就有多少个Dep：obj,foo 2个
+    // 没有computed和watch情况下，几个组件几个Watcher 1个
+    const app = new Vue({
+      el: '#app',
+      data: {
+        obj: {
+          foo: 'foo'
+        }
+      },
+      mounted () {
+        setTimeout(() => {
+          this.obj.foo = 'fooooooooo1'
+        }, 1000);
+      },
+    })
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h2>初始化</h2>
+    <p>{{bar}}</p>
+  </div>
+  <script>
+    new Vue({
+      el: '#app',
+      template: '<div>template</div>',
+      // template: '#app',
+      // render(h) {
+      //   return h('div', 'render')
+      // },
+      data() {
+        return {
+          bar: '人间正道是沧桑'
+        }
+      },
+    })
+  </script>
+</body>
+</html>
