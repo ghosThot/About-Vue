@@ -7,13 +7,17 @@ import { isIE, isIOS, isNative } from './env'
 
 export let isUsingMicroTask = false
 
+// 回调函数数组
 const callbacks = []
 let pending = false
 
+// 刷新回调函数数组
 function flushCallbacks () {
   pending = false
   const copies = callbacks.slice(0)
   callbacks.length = 0
+
+  // 遍历并执行
   for (let i = 0; i < copies.length; i++) {
     copies[i]()
   }
@@ -31,6 +35,8 @@ function flushCallbacks () {
 // sequential events (e.g. #4521, #6690, which have workarounds)
 // or even between bubbling of the same event (#6566).
 let timerFunc
+
+// 兼容性处理 Promise > MutationObserver > setImmediate > setTimeout
 
 // The nextTick behavior leverages the microtask queue, which can be accessed
 // via either native Promise.then or MutationObserver.
@@ -84,6 +90,8 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
   }
 }
 
+
+// 将cb函数放到回调队列队尾
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
   callbacks.push(() => {
@@ -99,6 +107,8 @@ export function nextTick (cb?: Function, ctx?: Object) {
   })
   if (!pending) {
     pending = true
+
+    // 异步执行函数
     timerFunc()
   }
   // $flow-disable-line
