@@ -10,6 +10,7 @@
 
   <!-- npm i snabbdom -->
   <script src="../../node_modules/snabbdom/dist/snabbdom.js"></script>
+  <script src="../../node_modules/snabbdom/dist/snabbdom-style.js"></script>
   <script>
     function defineReactive(obj, key, val) {
       Object.defineProperty(obj, key, {
@@ -30,7 +31,7 @@
 
     // snabbdom
     const {init, h} = snabbdom
-    const patch = init([])
+    const patch = init([snabbdom_style.default])
     // old vnode上次渲染结果
     let vnode
     function update() {
@@ -38,6 +39,7 @@
         // init,传入真实dom
         vnode = patch(app, render())
       } else {
+        // 更新
         vnode = patch(vnode, render())
       }
       console.log(vnode);
@@ -45,7 +47,7 @@
     }
 
     function render() {
-      return h('div', obj.foo)
+      return h('div', {style:{color:'blue'}}, obj.foo)
     }
 
     // 业务代码
