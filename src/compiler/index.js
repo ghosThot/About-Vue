@@ -12,8 +12,12 @@ export const createCompiler = createCompilerCreator(function baseCompile (
   template: string,
   options: CompilerOptions
 ): CompiledResult {
+
+  // 1.解析：将html字符串转换为ast对象
   const ast = parse(template.trim(), options)
   if (options.optimize !== false) {
+  
+    // 2.优化器 打tag  标记静态节点
     optimize(ast, options)
   }
   const code = generate(ast, options)

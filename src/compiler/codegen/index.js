@@ -57,6 +57,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
     el.pre = el.pre || el.parent.pre
   }
 
+  // 可以知道 v-for 优先级比 v-if高
   if (el.staticRoot && !el.staticProcessed) {
     return genStatic(el, state)
   } else if (el.once && !el.onceProcessed) {
@@ -164,6 +165,8 @@ function genIfConditions (
 
   const condition = conditions.shift()
   if (condition.exp) {
+
+    // 返回一个三元表达式
     return `(${condition.exp})?${
       genTernaryExp(condition.block)
     }:${
@@ -189,6 +192,10 @@ export function genFor (
   altGen?: Function,
   altHelper?: string
 ): string {
+
+  // v-for="item in items"
+  // exp: items
+  // alias: item
   const exp = el.for
   const alias = el.alias
   const iterator1 = el.iterator1 ? `,${el.iterator1}` : ''
@@ -210,6 +217,8 @@ export function genFor (
   }
 
   el.forProcessed = true // avoid recursion
+
+  // 最终结果 _l(exp, function(alias){}) 函数
   return `${altHelper || '_l'}((${exp}),` +
     `function(${alias}${iterator1}${iterator2}){` +
       `return ${(altGen || genElement)(el, state)}` +
