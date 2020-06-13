@@ -1,4 +1,4 @@
-# study-vue
+# ssr
 
 ## Project setup
 ```
