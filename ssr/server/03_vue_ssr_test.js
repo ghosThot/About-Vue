@@ -12,13 +12,19 @@ const {
 
 const renderer = createRenderer()
 
-server.get('/', async (req, res) => {
+server.get('*', async (req, res) => {
 
   const vm = new Vue({
-    template: '<p>{{ msg }}</p>',
+    template: '<p @click=onClick>{{ msg }}</p>',
     data() {
       return {
         msg: 'vue ssr'
+      }
+    },
+    methods: {
+      onClick() {
+        console.log('click!!!');
+        
       }
     },
   })
