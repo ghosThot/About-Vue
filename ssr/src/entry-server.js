@@ -9,7 +9,8 @@ export default context => {
     // 创建vue实例和路由实例
     const {
       app,
-      router
+      router,
+      store,
     } = createApp(context)
 
     // 获取用户请求url, 从而知道要渲染哪个页面
@@ -18,7 +19,33 @@ export default context => {
 
     // 监听路由ready事件，确保异步任务都完成
     router.onReady(() => {
-      resolve(app)
+
+      // 首先处理异步数据请求
+      // 获取当前匹配组件
+      const matchedComponents = router.getMatchedComponents()
+
+      // 404
+      if (!matchedComponents.length) {
+        return reject({ code: 404 })
+      }
+
+      Promise.all(matchedComponents.map(comp => {
+        if (comp.asyncData) {
+          // asyncData 需要参数：store，route
+          return comp.asyncData({
+            store,
+            route: router.currentRoute
+          })
+        }
+      })).then(() => {
+        // 所有预期钩子resolve后
+        // store已经填充了当前数据状态
+        // 这些数据需要同步到前端
+        // 做一个序列化操作，前端使用window.__INITIAL_STATE__获取
+        // 此处赋值给context.state 这是约定
+        context.state = store.state
+        resolve(app)
+      })
     }, reject)
   })
   
