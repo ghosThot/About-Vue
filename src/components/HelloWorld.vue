@@ -12,7 +12,7 @@
 <script lang="ts">
 // 方式一
 // class-style组件
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Emit } from 'vue-property-decorator';
 
 type Feature = {
   id: number;
@@ -23,22 +23,40 @@ type Select = {
   selected: boolean
 }
 
-type FeatureAndSelect = Feature & Select
+export type FeatureAndSelect = Feature & Select
 
-@Component
+@Component({
+  // props: {//方法2
+  //   msgs: {
+  //     type: Number,
+  //     default: 0
+  //   },
+  // },
+})
 export default class HelloWorld extends Vue {
-  @Prop() private msg!: string;
+
+  // 装饰器
+  @Prop({
+    type: String, // 写给vue
+    required: true
+  }) 
+  private msg!: string; // 方法1 string 写给ts的
 
   features: FeatureAndSelect[] = []
 
   // 声明周期同名方法作为同名钩子使用
-  created() {
-    this.features = [
-      { id: 1, name:'first-nanme', selected: true },
-      { id: 2, name: 'second-nanme', selected: false},
-    ]
+  async created() {
+    // this.features = [
+    //   { id: 1, name:'first-nanme', selected: true },
+    //   { id: 2, name: 'second-nanme', selected: false},
+    // ]
+
+    // 用泛型约束数据类型
+    const resp = await this.$axios.get<FeatureAndSelect[]>('/api/list')
+    this.features = resp.data
   }
 
+  @Emit()  // 以方法名做事件名，返回值做参数
   addFeature(e: KeyboardEvent) {
     // 如果用户特别确定类型，可以做类型断言
     const inp = e.target as HTMLInputElement
@@ -50,6 +68,7 @@ export default class HelloWorld extends Vue {
     }
     this.features.push(feature)
     inp.value = ''
+    return feature
   }
 
   // 存取器作为计算属性存在
