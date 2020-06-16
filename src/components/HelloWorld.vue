@@ -1,49 +1,77 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p @click="$store.commit('add')">sync {{$store.state.counter}}</p>
-    <p @click="$store.dispatch('add')">async {{$store.state.counter}}</p>
-    <p @click="$store.commit('add')">Gettters：{{$store.getters.doubleCounter}}</p>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
+    <p><input type="text" @keyup.enter="addFeature"></p>
     <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
+      <li :class="{selected: feature.selected}" v-for="feature in features" :key="feature.id">{{ feature.name }}</li>
+      <li>{{ count }}</li>
     </ul>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
+<script lang="ts">
+// 方式一
+// class-style组件
+import { Component, Prop, Vue } from 'vue-property-decorator';
+
+type Feature = {
+  id: number;
+  name: string;
 }
+
+type Select = {
+  selected: boolean
+}
+
+type FeatureAndSelect = Feature & Select
+
+@Component
+export default class HelloWorld extends Vue {
+  @Prop() private msg!: string;
+
+  features: FeatureAndSelect[] = []
+
+  // 声明周期同名方法作为同名钩子使用
+  created() {
+    this.features = [
+      { id: 1, name:'first-nanme', selected: true },
+      { id: 2, name: 'second-nanme', selected: false},
+    ]
+  }
+
+  addFeature(e: KeyboardEvent) {
+    // 如果用户特别确定类型，可以做类型断言
+    const inp = e.target as HTMLInputElement
+    const val = inp.value
+    const feature: FeatureAndSelect = {
+      id: this.features.length + 1,
+      name: val,
+      selected: false
+    }
+    this.features.push(feature)
+    inp.value = ''
+  }
+
+  // 存取器作为计算属性存在
+  get count() {
+    return this.features.length
+  }
+
+}
+
+
+// 方式二
+// options-style
+// export default Vue.extend({
+//   props: ['msg'],
+//   mounted () {
+//     this.msg;
+//   },
+// })
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 h3 {
   margin: 40px 0 0;
 }
@@ -51,9 +79,8 @@ ul {
   list-style-type: none;
   padding: 0;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+.selected {
+  background-color: #774413;
 }
 a {
   color: #42b983;
