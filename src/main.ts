@@ -3,6 +3,8 @@ import App from './App.vue'
 import './plugins/element.js'
 import create from '@/utils/create';
 
+import './ts-test'
+
 // import router from './router'
 import router from './krouter'
 

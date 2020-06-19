@@ -19,3 +19,23 @@ union = 'abcd'
 type First = {first: number}
 type Second = {Second: number}
 type FirstAndSecond = First & Second
+
+
+
+
+@log
+class Foo {
+  bar = 'bar'
+}
+// 类装饰器参数是装饰的class
+function log(target: Function) {
+  target.prototype.log = function () {
+    console.log(this.bar);
+    
+  }
+}
+
+const foo1 = new Foo()
+// @ts-ignore
+foo1.log()
+
