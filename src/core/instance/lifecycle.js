@@ -138,6 +138,8 @@ export function lifecycleMixin (Vue: Class<Component>) {
   }
 }
 
+
+// $mount 调用的
 export function mountComponent (
   vm: Component,
   el: ?Element,
@@ -191,6 +193,7 @@ export function mountComponent (
     }
   }
 
+  // 组件个数跟Watcher个数一一对应
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined

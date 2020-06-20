@@ -557,6 +557,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // diff算法
   // 单个节点比较
   function patchVnode (
     oldVnode,

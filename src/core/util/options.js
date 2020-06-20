@@ -122,7 +122,7 @@ strats.data = function (
   parentVal: any,
   childVal: any,
   vm?: Component
-): ?Function {
+): ?Function { // 普通组件，没有实例，进行校验
   if (!vm) {
     if (childVal && typeof childVal !== 'function') {
       process.env.NODE_ENV !== 'production' && warn(
@@ -136,7 +136,7 @@ strats.data = function (
     }
     return mergeDataOrFn(parentVal, childVal)
   }
-
+  // 根实例 没有走检测
   return mergeDataOrFn(parentVal, childVal, vm)
 }
 
