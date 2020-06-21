@@ -10,6 +10,9 @@ import router from './krouter'
 import store from './kstore'
 // import Notice from '@/components/Notice.vue';
 
+// 导入svg图标
+import './icons'
+
 Vue.config.productionTip = false
 // 事件总线
 Vue.prototype.$bus = new Vue()
