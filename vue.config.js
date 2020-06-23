@@ -2,6 +2,10 @@
 const path = require('path')
 const port = 7077
 
+console.log(process.env.navCount);
+console.log(process.env.VUE_APP_TESTCC);
+
+
 module.exports = {
   publicPath: '/practice',
   devServer: {

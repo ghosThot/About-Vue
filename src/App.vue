@@ -8,6 +8,12 @@
   </div>
 </template>
 
+<script>
+  console.log(process.env.navCount);
+  console.log(process.env.VUE_APP_TESTCC);
+  
+</script>
+
 <style lang="scss">
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
