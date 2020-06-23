@@ -1,63 +1,38 @@
-import Notice from '@/components/Notice.vue';
+import Vue from 'vue'
+import Notice from '@/components/Notice.vue'
 
-/**
- * 实现一个create方法，能够创建指定组件的实例
- * 并将其挂载在body上
- */
-// export default function create(Component, props) {
+function create(Component, props) {
+  // 组件构造函数如何获取？
+  // 1.Vue.extend()
+  // 2.render
+  const vm = new Vue({
+    // h是createElement, 返回VNode，是虚拟dom
+    // 需要挂载才能变成真实dom
+    render: h => h(Component, {props}),
+  }).$mount() // 不指定宿主元素，则会创建真实dom，但是不会追加操作
 
-//   // 方案一
-//   const Ctor = Vue.extend(Component);
-  
-//   const comp = new Ctor({propsData:props});
+  // 获取真实dom
+  document.body.appendChild(vm.$el)
 
-//   comp.$mount()
+  const comp = vm.$children[0]
 
-//   document.body.appendChild(comp.$el)
-  
-//   comp.remove = () => {
-//     document.body.removeChild(comp.$el)
-//   }
-
-  // 方案二
-  // const vm = new Vue({
-  //   render(h) {
-  //     return h(Component, {props})
-  //   }
-  // }).$mount()
-
-  // document.body.appendChild(vm.$el)
-
-  // const comp = vm.$children[0]
-  // comp.remove = () => {
-  //   document.body.removeChild(vm.$el)
-  //   comp.$destroy()
-  // }
-
-  // return comp
-// }
-
-
-//插件形式
-export default {
-  install(Vue) {
-    Vue.prototype.$notice = function (props) {
-      // return create(Notice, options)
-      const Ctor = Vue.extend(Notice);
-
-      const comp = new Ctor({
-        propsData: props
-      });
-
-      comp.$mount()
-
-      document.body.appendChild(comp.$el)
-
-      comp.remove = () => {
-        document.body.removeChild(comp.$el)
-      }
-      return comp
-    }
+  // 删除
+  comp.remove = function() {
+    document.body.removeChild(vm.$el)
+    vm.$destroy()
   }
 
+  return comp
+
+}
+
+export default {
+  install(Vue) {
+    Vue.prototype.$notice = function(options) {
+
+      return create(Notice, options)
+    }
+
+    //$alert
+  }
 }

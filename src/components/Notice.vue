@@ -4,6 +4,7 @@
     <p class="box-content">{{message}}</p>
   </div>
 </template>
+
 <script>
 export default {
   props: {
@@ -32,11 +33,13 @@ export default {
     },
     hide() {
       this.isShow = false;
+      // 清除自己
       this.remove();
     }
   }
 };
 </script>
+
 <style>
 .box {
   position: fixed;
@@ -52,7 +55,7 @@ export default {
 .box-content {
   width: 200px;
   margin: 10px auto;
-  font-size: 14px;
+  font-size: 14px;  
   padding: 8px 16px;
   background: #fff;
   border-radius: 3px;

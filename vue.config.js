@@ -1,51 +1,72 @@
-// nodejs 执行
+const port = 7070;
+const title = "vue项目最佳实践";
+
 const path = require('path')
-const port = 7077
 
-console.log(process.env.navCount);
-console.log(process.env.VUE_APP_TESTCC);
+function resolve(dir) {
+  return path.join(__dirname, dir)
+}
 
+const bodyParser = require("body-parser");
 
 module.exports = {
-  publicPath: '/practice',
+  publicPath: '/best-practice', // 部署应用包时的基本 URL
   devServer: {
-    port
-  },
-  // configureWebpack: {
-  //   resolve: {
-  //     alias: {
-  //       comps: path.join(__dirname, 'src/components')
-  //     }
-  //   },
-  //   name: 'vue best practice'
-  // },
+    port: port,
+    proxy: {
+      // 代理 /dev-api/user/login 到 http://127.0.0.1:3000/user/login
+      [process.env.VUE_APP_BASE_API]: {
+        target: `http://127.0.0.1:3000/`,
+        changeOrigin: true,
+        pathRewrite: {
+          ["^" + process.env.VUE_APP_BASE_API]: ""
+        }
+      }
+    },
+    // before: app => {
+    //   app.use(bodyParser.json());
 
-  // 函数形式
-  configureWebpack: config => {
-    config.resolve.alias.comps = path.join(__dirname, 'src/components')
-    // 根据环境变量
-    if (process.env.NODE_ENV === 'development') {
-      config.name = 'vue 最佳实践'
-    } else {
-      config.name = 'vue best practice'
-    }
+    //   app.post("/dev-api/user/login", (req, res) => {
+    //     const { username } = req.body;
+
+    //     if (username === "admin" || username === "jerry") {
+    //       res.json({
+    //         code: 1,
+    //         data: username
+    //       });
+    //     } else {
+    //       res.json({
+    //         code: 10204,
+    //         message: "用户名或密码错误"
+    //       });
+    //     }
+    //   });
+
+    //   app.get("/dev-api/user/info", (req, res) => {
+    //     const auth = req.headers["authorization"];
+    //     const roles = auth.split(' ')[1] === "admin" ? ["admin"] : ["editor"];
+    //     res.json({
+    //       code: 1,
+    //       data: roles
+    //     });
+    //   });
+    // }
   },
 
-  // 链式配置
+  configureWebpack: {
+    // 向index.html注入标题
+    name: title,
+  },
   chainWebpack(config) {
-    // icon目录绝对路径
-    const iconsPath = path.join(__dirname, 'src/icons')
-    // 1.禁用默认svg的rules，使他忽略icons目录
     config.module.rule('svg')
-      .exclude.add(iconsPath)
-    
-    // 2.启用 svg-sprite-loader,使他启用icons目录
+      .exclude.add(resolve('./src/icons'))
+
     config.module.rule('icons')
       .test(/\.svg$/)
-      .include.add(iconsPath).end()
+      .include.add(resolve('./src/icons')).end()
       .use('svg-sprite-loader')
-        .loader('svg-sprite-loader')
-        .options({symbolId: 'icon-[name]'})
-  }
+      .loader('svg-sprite-loader')
+      .options({ symbolId: 'icon-[name]' })
 
-}
+  }
+};

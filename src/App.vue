@@ -1,22 +1,30 @@
 <template>
   <div id="app">
+    <Sidebar></Sidebar>
     <div id="nav">
-      <router-link to="/">Home</router-link> |
+      <router-link to="/">
+        <svg-icon icon-class="denglong"></svg-icon>Home
+      </router-link>|
       <router-link to="/about">About</router-link>
     </div>
-    <router-view/>
+
+    <!-- 路由出口 -->
+    <router-view />
   </div>
 </template>
 
 <script>
-  console.log(process.env.navCount);
-  console.log(process.env.VUE_APP_TESTCC);
-  
-</script>
+import Sidebar from "@/components/Sidebar";
 
-<style lang="scss">
+export default {
+  components: {
+    Sidebar
+  }
+};
+</script>
+<style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -25,14 +33,14 @@
 
 #nav {
   padding: 30px;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>

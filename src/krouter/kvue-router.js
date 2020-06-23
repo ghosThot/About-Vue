@@ -1,164 +1,68 @@
-let Vue
+import Link from './krouter-link'
+import View from './krouter-view'
 
-// VueRouter 类
-class VueRouter {
+let Vue;
+
+// 1.实现一个插件：挂载$router
+
+class KVueRouter {
   constructor(options) {
-
     this.$options = options
+    console.log(this.$options);
+    
 
-    // 处理route 优化（不至于每次重新渲染都会遍历一次） 做一个映射表缓存
-    // this.routeMap = {}
-    // this.$options.routes.forEach(route => {
-    //   this.routeMap[route.path] = route
+    // 需要创建响应式的current属性
+    // 利用Vue提供的defineReactive做响应化
+    // 这样将来current变化的时候，依赖的组件会重新render
+    Vue.util.defineReactive(this, 'current', '/')
+
+    // this.app = new Vue({
+    //   data() {
+    //     return {
+    //       current: '/'
+    //     }
+    //   }
     // })
-
-
-    //保存当前的url
-    //为了使current的组件重新渲染 应该是响应式的
-    // 方式一：new Vue() 把data值设置成current
-    // 方式二：Vue.util.defineReactive() 给一个对象的指定一个属性为响应式
-    // Vue.util.defineReactive(this, 'current', '/')
-    // this.current = '/' 
-
-    this.current = window.location.hash.slice(1) || '/'
-    Vue.util.defineReactive(this, 'matched', [])
-    // match 可以通过遍历路由表，获取匹配数组
-    this.match()
-
+    
+    // 监控url变化
     window.addEventListener('hashchange', this.onHashChange.bind(this))
+    window.addEventListener('load', this.onHashChange.bind(this))
+
+
+    // 创建一个路由映射表
+    this.routeMap = {}
+    options.routes.forEach(route => {
+      this.routeMap[route.path] = route
+    })
   }
 
   onHashChange() {
+    console.log(window.location.hash);
 
     this.current = window.location.hash.slice(1)
-
-    console.log(this.current)
-
-    this.matched = []
-    this.match()
-  }
-
-  match(routes) {
-    routes = routes || this.$options.routes
-
-    // 递归遍历
-    for (const route of routes) {
-      if (route.path === '/' && this.current === '/') {
-        this.matched.push(route)
-        return
-      }
-
-      // 嵌套路由 /about/info
-      if (route.path !== '/' && this.current.indexOf(route.path) !== -1) {
-        this.matched.push(route)
-        if (route.children) {
-          this.match(route.children)
-        }
-        return
-      }
-    }
   }
 }
 
-// new Vue 根实例
-// App 根组件
-// 单例模式
+KVueRouter.install = function (_Vue) {
+  // 保存构造函数，在KVueRouter里面使用
+  Vue = _Vue;
 
-
-// 实现install方法 静态的
-//参数1：Vue构造函数，Vue.use()执行的是install方法
-VueRouter.install = function (_Vue) {
-  Vue = _Vue
-
-
-  //1.挂在VueRouter实例
-  //只有在生命周期里面才能获取组件实例，并且获取选项
+  // 挂载$router
+  // 怎么获取根实例中的router选项
   Vue.mixin({
     beforeCreate() {
+      // 确保根实例的时候才执行
       if (this.$options.router) {
         Vue.prototype.$router = this.$options.router
       }
+
     }
   })
 
 
-  //2.注册 router-view router-link
-  Vue.component('router-view', {
-    render(h) {
-
-      // 标记当前router-view深度
-      this.$vnode.data.routerView = true
-
-      let depth = 0
-      let parent = this.$parent
-      while (parent) {
-        const vnodeData = parent.$vnode && parent.$vnode.data
-        if (vnodeData) {
-          if (vnodeData.routerView) { //说明当前的parent是一个router-view
-            depth++
-          }
-        }
-        
-        parent = parent.$parent
-      }
-
-
-
-      // 获取path对应的component
-      // console.log('router-view render', this.$router.current);
-      // const {routeMap, current} = this.$router
-      // const component = routeMap[current].component || null
-      // const {$options, current} = this.$router
-      // const route = $options.routes.find(route => route.path === current)
-      // if (route) {
-      //   component = route.component
-      // }
-      // console.log(routeMap, current);
-      
-      let component = null
-      const route = this.$router.matched[depth]
-      console.log(route);
-      
-      if (route) {
-        component = route.component
-      }
-
-      // return h('div', 'router-view: nothing is there')
-      return h(component)
-    }
-  })
-  Vue.component('router-link', {
-    props: {
-      to: {
-        type: String,
-        default: ''
-      },
-    },
-    render(h) {
-      return h('a', {
-        attrs: {
-          href: '#' + this.to
-        }
-      }, this.$slots.default)
-
-      //jsx 写法
-      // return <a href = {
-      //   '#' + this.to
-      // }>{this.$slots.default}</a>
-    }
-
-  })
-
-
-
+  // 任务2：实现两个全局组件router-link和router-view
+  Vue.component('router-link', Link)
+  Vue.component('router-view', View)
 }
 
-  
-
-
-
-
-
-
-
-export default VueRouter
+export default KVueRouter
